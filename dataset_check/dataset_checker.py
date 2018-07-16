@@ -4,6 +4,8 @@ import os
 import numpy as np
 from time import time
 
+from tqdm import tqdm
+
 import matplotlib.pyplot as plt
 
 from random import randint
@@ -187,10 +189,14 @@ def loadAllImages(
 
     labels = []
     imgs = []
-    for k,paths in image_paths.items():
-        for p in paths:
-            labels.append(k)
-            imgs.append(loadImage(p, crop_size=crop_size))
+
+    image_count = sum([len(v) for k,v in image_paths.items()])
+    with tqdm(total=image_count) as pbar:
+        for k,paths in image_paths.items():
+            for p in paths:
+                labels.append(k)
+                imgs.append(loadImage(p, crop_size=crop_size))
+                pbar.update()
 
     X, y = np.array(imgs), labels
 
