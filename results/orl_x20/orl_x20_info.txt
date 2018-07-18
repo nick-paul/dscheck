@@ -1,0 +1,21 @@
+# Results for orl_x20
+Directory: /Users/npaul/Documents/git/dscheck/data/orl
+Crop size: 20
+Epochs: 40
+Training set size: 300
+Test set size: 50
+Validation set size: 50
+num_classes: 40
+image_size: (20, 20)
+class_names: ['s1', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 's2', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's3', 's30', 's31', 's32', 's33', 's34', 's35', 's36', 's37', 's38', 's39', 's4', 's40', 's5', 's6', 's7', 's8', 's9']
+[INFO] building model 'orl_x20' ...
+[INFO] compiling model 'orl_x20' ...
+[INFO] training network...
+[INFO] serializing network...
+Saving model as ./models/orl_x20.model
+Loss on test data: 2.0076692152023314
+Accuracy on test data: 0.44000000119209287
+Correct / Total: 22/50
+Random guess accuracy:   0.02500000
+Classifier accuracy:     0.44000000
+Improvement over chance: 1660.00000477

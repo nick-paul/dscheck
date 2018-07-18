@@ -1,0 +1,62 @@
+# LeNet
+
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.layers import Activation
+from keras.layers.convolutional import Conv2D
+from keras.layers.convolutional import MaxPooling2D
+from keras import backend as K
+
+if K.backend() == 'tensorflow':
+    K.set_image_dim_ordering("th")
+
+# from keras.layers import Dropout
+# from keras.constraints import maxnorm
+# from keras.optimizers import SGD
+# from keras.layers.normalization import BatchNormalization
+# from keras.optimizers import Adam
+# from keras.preprocessing.image import ImageDataGenerator
+
+# Not including these will cause a dimension mismatch
+# from keras.utils import np_utils
+# from keras.preprocessing.image import img_to_array
+
+# Import Tensorflow with multiprocessing
+# import tensorflow as tf
+# import multiprocessing as mp
+
+
+# Define the LeNet Model
+class LeNet:
+    @staticmethod
+    def build(width, height, depth, classes):
+        # initialize the model
+        model = Sequential()
+        inputShape = (height, width, depth)
+
+        # if we are using "channels first", update the input shape
+        if K.image_data_format() == "channels_first":
+            inputShape = (depth, height, width)
+
+        # first set of CONV => RELU => POOL layers
+        model.add(Conv2D(20, (5, 5), padding="same", input_shape=inputShape))
+        model.add(Activation("relu"))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+        # second set of CONV => RELU => POOL layers
+        model.add(Conv2D(50, (5, 5), padding="same"))
+        model.add(Activation("relu"))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+        # first (and only) set of FC => RELU layers
+        model.add(Flatten())
+        model.add(Dense(500))
+        model.add(Activation("relu"))
+
+        # softmax classifier
+        model.add(Dense(classes))
+        model.add(Activation("softmax"))
+
+        # return the constructed network architecture
+        return model

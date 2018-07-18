@@ -1,6 +1,6 @@
 *.pyc
 *.swp
-.DS_Store
+*.DS_Store
 models/
 data/
 plots/
