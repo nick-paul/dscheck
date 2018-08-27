@@ -6,6 +6,7 @@ import numpy as np
 import argparse
 import os
 import sys
+import random
 
 
 def percentChange(random_guess, classifier):
@@ -57,7 +58,6 @@ def runBatch(name, path, crops, epochs_list, nocrop_epochs=0, output=sys.stdout)
     if len(crops) != len(epochs_list):
         raise ValueError('crops and epochs must be the same length')
 
-
     if nocrop_epochs > 0:
         runSingle(name + '_x0', path, None, nocrop_epochs, output=output)
 
@@ -68,7 +68,6 @@ def runBatch(name, path, crops, epochs_list, nocrop_epochs=0, output=sys.stdout)
 
 
 def runSingle(name, path, crop, epochs, output=sys.stdout, data=None):
-
     printHeader(out, name, path, crop, epochs)
 
     # Load all data
@@ -115,32 +114,48 @@ if __name__ == '__main__':
     # Argument parser
     parser = argparse.ArgumentParser()
     parser.add_argument('dir')
-    parser.add_argument('-size', type=int, default=0)
-    parser.add_argument('-epochs', type=int, default=4)
+
+    parser.add_argument('--crop', nargs='+', type=int, default=[10],
+                        help='The size of the crop in pixels')
+    parser.add_argument('--epochs', nargs='+', type=int, default=[4],
+                        help='Number of epochs to test on')
+    parser.add_argument('--nocrop-epochs', type=int, default=0,
+                        help='If provided, run the network on the uncropped dataset')
+    parser.add_argument('--name', type=str,
+                        help='Provide a name for the results directory')
+
     args = parser.parse_args()
     args.dir = os.path.abspath(args.dir)
 
+    # Check size and epochs list lengths
+    if len(args.crop) != len(args.epochs):
+        print("Arguments '--crop' and '--epochs' must have same number of elements")
+        print("Got:")
+        print("\tsize: %s" % args.crop)
+        print("\tepochs: %s" % args.epochs)
+        exit(0)
+
     # dataset name
-    name = args.dir.split('/')[-1] # + '_x' + str(args.size)
+    name = args.dir.split('/')[-1]  # + '_x' + str(args.size)
+
+    # results dir name
+    if args.name is None:
+        args.name = ''.join([random.choice('0123456789abcde') for x in range(6)])
 
     # create a directory
     global results_dir
-    results_dir = 'results/%s' % name
+    results_dir = 'results/%s/%s' % (name, args.name)
     if not os.path.exists(results_dir):
         os.makedirs(results_dir)
 
     out = open(os.path.join(results_dir, '%s_info.txt' % name), 'w')
 
+    # Use same size width and height
+    crop_dims = [(c,c) for c in args.crop]
 
-    # crop = (args.size, args.size)
-    # if args.size <= 0:
-        # crop = None
+    if len(crop_dims) == 1:
+        runSingle(name, args.dir, crop_dims[0], args.epochs[0], output=out)
+    else:
+        runBatch(name, args.dir, crop_dims, args.epochs, nocrop_epochs=args.nocrop_epochs, output=out)
 
-    # runSingle(name, args.dir, crop, args.epochs, output=out)
-
-    crops = [(x,x) for x in [50, 20, 10]]
-    epochs = [40, 70, 90]
-
-    runBatch(name, args.dir, crops, epochs, nocrop_epochs=20, output=out)
-
-
+    print("\nDone! Result files created in './%s'" % results_dir)
