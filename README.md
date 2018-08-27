@@ -39,3 +39,9 @@ The above command will run process the data located in the `datasets/orl` direct
 
 ## ORL Face Dataset Example
 
+The classifier was able to achieve close to 70% prediction accuracy by only looking at a 10x10 pixel crop in the upper right of the images.
+
+![orl training histogram](img/orl_training_hist.png)
+
+![orl example](img/orl_preview_image.png)
+
